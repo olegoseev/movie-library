@@ -39,7 +39,7 @@ public class CharacterController {
 	
 	@GetMapping(CHARACTERS_MOVIE)
 	public ResponseEntity<Object> findMovieCharacters(@PathVariable(name = "id") Long id){
-		return ResponseWrapper.ok(libraryService.findMovieCharacters(id));
+		return ResponseWrapper.ok(libraryService.getMovieCharacters(id));
 	}
 	
 	@PostMapping(CREATE)

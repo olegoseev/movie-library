@@ -49,7 +49,7 @@ public class Movie {
 	private List<Genre> genres = new ArrayList<>();
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name = "movie_id", nullable=false, insertable=false)
+	@JoinColumn(name = "movie_id", referencedColumnName = "id", nullable=false, insertable=false)
 	private List<MovieCharacter> characters = new ArrayList<>();
 	
 	public long getId() {

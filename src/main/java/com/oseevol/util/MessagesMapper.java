@@ -128,8 +128,8 @@ public final class MessagesMapper {
 
 		Map<String, Object> map = new LinkedHashMap<>();
 
-		map.put(STATUS, "error");
-		map.put("message", message);
+		map.put(STATUS, ERROR);
+		map.put(MESSAGE, message);
 
 		return map;
 	}
@@ -143,9 +143,9 @@ public final class MessagesMapper {
 
 		Map<String, Object> map = new LinkedHashMap<>();
 
-		map.put("status", "error");
-		map.put("error", HttpStatus.INTERNAL_SERVER_ERROR);
-		map.put("message", "Internal Server Error");
+		map.put(STATUS, ERROR);
+		map.put(ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+		map.put(MESSAGE, "Internal Server Error");
 
 		return map;
 	}

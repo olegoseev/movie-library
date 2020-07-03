@@ -25,6 +25,7 @@ import com.oseevol.controller.exception.ResourceAlreadyExistsException;
 import com.oseevol.controller.exception.ResourceNotFoundException;
 import com.oseevol.data.ActorDTO;
 import com.oseevol.data.GenreDTO;
+import com.oseevol.data.MovieActorCharacterDTO;
 import com.oseevol.data.MovieCharacterDTO;
 import com.oseevol.data.MovieDTO;
 import com.oseevol.data.entity.Actor;
@@ -33,6 +34,7 @@ import com.oseevol.data.entity.Movie;
 import com.oseevol.data.entity.MovieCharacter;
 import com.oseevol.repository.ActorRepository;
 import com.oseevol.repository.GenreRepository;
+import com.oseevol.repository.MovieCharacterRepository;
 import com.oseevol.repository.MovieRepository;
 import com.oseevol.repository.specs.ActorSpecification;
 import com.oseevol.repository.specs.AssemblyOption;
@@ -46,20 +48,24 @@ import com.oseevol.service.LibraryService;
 @Service
 public class LibraryServiceImpl implements LibraryService {
 
+	private static final String ERROR = "error";
+	
 	private final MovieRepository movieRepository;
 	private final ActorRepository actorRepository;
 	private final GenreRepository genreRepository;
+	private final MovieCharacterRepository movieCharacterRepository;
 
 	private final ModelMapper modelMapper;
 
 	private static Logger logger = LoggerFactory.getLogger(LibraryServiceImpl.class);
 
 	public LibraryServiceImpl(MovieRepository movieRepository, ActorRepository actorRepository,
-			GenreRepository genreRepository, ModelMapper modelMapper) {
+			GenreRepository genreRepository, ModelMapper modelMapper, MovieCharacterRepository movieCharacterRepository) {
 		super();
 		this.movieRepository = movieRepository;
 		this.actorRepository = actorRepository;
 		this.genreRepository = genreRepository;
+		this.movieCharacterRepository = movieCharacterRepository;
 		this.modelMapper = modelMapper;
 	}
 
@@ -68,7 +74,7 @@ public class LibraryServiceImpl implements LibraryService {
 		if (id <= 0) {
 			logger.info(INVALID_ID);
 			Map<String, String> details = new HashMap<>();
-			details.put("error", INVALID_ID);
+			details.put(ERROR, INVALID_ID);
 			throw new BadRequestException(BAD_REQUEST, details);
 		}
 	}
@@ -77,7 +83,7 @@ public class LibraryServiceImpl implements LibraryService {
 		if (obj == null) {
 			logger.error(OBJ_NULL_REF);
 			Map<String, String> details = new HashMap<>();
-			details.put("error", OBJ_NULL_REF);
+			details.put(ERROR, OBJ_NULL_REF);
 			throw new BadRequestException(BAD_REQUEST, details);
 		}
 	}
@@ -116,7 +122,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		if (!specs.hasCriteria()) {
 			Map<String, String> details = new HashMap<>();
-			details.put("error", "Search parameters invalid");
+			details.put(ERROR, "Search parameters invalid");
 			throw new BadRequestException(BAD_REQUEST, details);
 		}
 
@@ -226,7 +232,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		if (!specs.hasCriteria()) {
 			Map<String, String> details = new HashMap<>();
-			details.put("error", "Search parameters invalid");
+			details.put(ERROR, "Search parameters invalid");
 			throw new BadRequestException(BAD_REQUEST, details);
 		}
 
@@ -284,7 +290,7 @@ public class LibraryServiceImpl implements LibraryService {
 
 		if (!specs.hasCriteria()) {
 			Map<String, String> details = new HashMap<>();
-			details.put("error", "Search parameters invalid");
+			details.put(ERROR, "Search parameters invalid");
 			throw new BadRequestException(BAD_REQUEST, details);
 		}
 		final List<Actor> actors = actorRepository.findAll(specs.getFilter(AssemblyOption.OR));
@@ -314,9 +320,9 @@ public class LibraryServiceImpl implements LibraryService {
 		final Actor actor = actorRepository.findById(id).orElse(null);
 
 		if (actor == null) {
-			logger.error("Object with id %l not found", id);
+			logger.error("Object with not found");
 			Map<String, String> details = new HashMap<>();
-			details.put("error", INVALID_ID);
+			details.put(ERROR, INVALID_ID);
 			throw new ResourceNotFoundException(ACTOR_NOT_FOUND, details);
 		}
 
@@ -354,15 +360,49 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public List<MovieCharacter> findMovieCharacters(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	public MovieActorCharacterDTO getMovieCharacters(Long id) {
+		validateId(id);
+		
+		Movie movie = getMovie(id);
+		
+		Optional<List<MovieCharacter>> optional = movieCharacterRepository.findCharactersByMovieId(movie.getId());
+		
+		if(optional.isEmpty())
+			throw new ResourceNotFoundException("Characters not found");
+		
+		
+		var movieCharacters = optional.get();
+		
+		MovieCharacter character = movieCharacters.get(0);
+		
+		long movieId = character.getMovieId();
+		
+		Movie dbMovie = getMovie(movieId); 
+		
+		MovieActorCharacterDTO movieCharactersDTO = new MovieActorCharacterDTO();
+		
+		movieCharactersDTO.setMovie(dbMovie);
+		
+		movieCharacters.forEach(mc -> {
+			Actor actor = getActor(mc.getActorId());
+			movieCharactersDTO.getActorCharacters().put(mc.getCharacterName(), actor);
+		});
+		
+		return movieCharactersDTO;
 	}
 
 	@Override
-	public MovieCharacter addCharacter(MovieCharacterDTO characterDTO) {
-		// TODO Auto-generated method stub
-		return null;
+	public MovieCharacter addCharacter(MovieCharacterDTO model) {
+		Movie movie = getMovie(model.getMovie().getId());
+		Actor actor = getActor(model.getActor().getId());
+		
+		MovieCharacter character = new MovieCharacter();
+		
+		character.setCharacterName(model.getCharacterName());
+		character.setActorId(actor.getId());
+		character.setMovieId(movie.getId());
+	
+		return movieCharacterRepository.save(character);
 	}
 
 }

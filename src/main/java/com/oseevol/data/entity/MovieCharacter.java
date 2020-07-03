@@ -1,5 +1,6 @@
 package com.oseevol.data.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,12 +19,14 @@ public class MovieCharacter {
 	@NotEmpty(message = "Character name is required")
 	private String characterName;
 	
-	@NotEmpty(message = "Movie is required")
-	private long movie_id;
 	
-	@NotEmpty(message = "Actor is required")
-	private long actor_id;
-
+	@Column(name = "movie_id")
+	private long movieId;
+	
+	@Column(name = "actor_id")
+	private long actorId;
+	
+	
 	public long getId() {
 		return id;
 	}
@@ -40,19 +43,20 @@ public class MovieCharacter {
 		this.characterName = characterName;
 	}
 
-	public long getMovie_id() {
-		return movie_id;
+	public long getMovieId() {
+		return movieId;
 	}
 
-	public void setMovie_id(long movie_id) {
-		this.movie_id = movie_id;
+	public void setMovieId(long movieId) {
+		this.movieId = movieId;
 	}
 
-	public long getActor_id() {
-		return actor_id;
+	public long getActorId() {
+		return actorId;
 	}
 
-	public void setActor_id(long actor_id) {
-		this.actor_id = actor_id;
+	public void setActorId(long actorId) {
+		this.actorId = actorId;
 	}
+
 }

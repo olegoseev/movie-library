@@ -46,7 +46,7 @@ public class Actor {
 	
 	
 	@OneToMany(cascade=CascadeType.ALL)
-	@JoinColumn(name = "actor_id", nullable=false, insertable=false)
+	@JoinColumn(name = "actor_id", referencedColumnName = "id", nullable=false, insertable=false)
 	private List<MovieCharacter> characters = new ArrayList<>();
 	
 	public Actor() {}

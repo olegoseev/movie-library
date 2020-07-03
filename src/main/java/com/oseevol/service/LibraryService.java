@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.oseevol.data.ActorDTO;
 import com.oseevol.data.GenreDTO;
+import com.oseevol.data.MovieActorCharacterDTO;
 import com.oseevol.data.MovieCharacterDTO;
 import com.oseevol.data.MovieDTO;
 import com.oseevol.data.entity.Actor;
@@ -34,7 +35,7 @@ public interface LibraryService {
 
 	Genre getGenreByName(String name);
 
-	Genre addGenre(GenreDTO genre);
+	Genre addGenre(GenreDTO model);
 
 	void deleteGenre(long id);
 
@@ -47,13 +48,13 @@ public interface LibraryService {
 
 	List<Actor> getActorsForMovie(Long id);
 
-	Movie addMovie(MovieDTO movie);
+	Movie addMovie(MovieDTO model);
 
 	Actor addActor(ActorDTO actor);
 
 	MovieCharacter getCharacter(Long id);
 
-	List<MovieCharacter> findMovieCharacters(Long id);
+	MovieActorCharacterDTO getMovieCharacters(Long id);
 
-	MovieCharacter addCharacter(MovieCharacterDTO characterDTO);
+	MovieCharacter addCharacter(MovieCharacterDTO model);
 }

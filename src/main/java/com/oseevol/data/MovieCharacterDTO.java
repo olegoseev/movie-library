@@ -1,41 +1,37 @@
 package com.oseevol.data;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+
+import com.oseevol.data.entity.Actor;
+import com.oseevol.data.entity.Movie;
 
 public class MovieCharacterDTO {
 
-	@NotNull(message = "Movie id required")
-	@Positive(message = "Id should be gerater than 0")
-	private long movieId;
-	@NotNull(message = "Actor id required")
-	@Positive(message = "Id should be gerater than 0")
-	private long actorId;
-	@NotNull(message = "Character id required")
-	@Positive(message = "Id should be gerater than 0")
-	private long characterId;
-
-	public long getMovieId() {
-		return movieId;
+	@NotEmpty(message = "Character name is required")
+	private String characterName;
+	@NotNull(message = "Movie is required")
+	private Movie movie;
+	@NotNull(message = "Actor is required")
+	private Actor actor;
+	
+	public String getCharacterName() {
+		return characterName;
 	}
-
-	public void setMovieId(long movieId) {
-		this.movieId = movieId;
+	public void setCharacterName(String characterName) {
+		this.characterName = characterName;
 	}
-
-	public long getActorId() {
-		return actorId;
+	public Movie getMovie() {
+		return movie;
 	}
-
-	public void setActorId(long actorId) {
-		this.actorId = actorId;
+	public void setMovie(Movie movie) {
+		this.movie = movie;
 	}
-
-	public long getCharacterId() {
-		return characterId;
+	public Actor getActor() {
+		return actor;
 	}
-
-	public void setCharacterId(long characterId) {
-		this.characterId = characterId;
+	public void setActor(Actor actor) {
+		this.actor = actor;
 	}
+	
 }

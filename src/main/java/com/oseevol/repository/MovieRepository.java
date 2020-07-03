@@ -9,8 +9,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import com.oseevol.data.entity.Genre;
 import com.oseevol.data.entity.Movie;
 
-
-public interface MovieRepository extends JpaSpecificationExecutor<Movie>,  JpaRepository <Movie, Long>  {
+public interface MovieRepository extends JpaSpecificationExecutor<Movie>, JpaRepository<Movie, Long> {
 	List<Movie> findByGenres(Genre genre);
 
 	Optional<Movie> findByTitle(String title);

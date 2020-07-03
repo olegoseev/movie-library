@@ -78,7 +78,7 @@ public abstract class BaseSpecification<T> implements SearchSpecification {
 							break;
 						}
 					} catch (IllegalArgumentException ex) {
-						logger.error("criteria build error: " + ex.getMessage());
+						logger.error("criteria build error: %s ", ex.getMessage());
 					}
 
 				}
