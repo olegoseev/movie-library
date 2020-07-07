@@ -6,6 +6,7 @@ import static com.oseevol.controller.RouterEndpoint.CREATE;
 import static com.oseevol.controller.RouterEndpoint.MOVIES_ROOT;
 import static com.oseevol.controller.RouterEndpoint.RESOURCE_ID;
 import static com.oseevol.controller.RouterEndpoint.SEARCH;
+import static com.oseevol.controller.RouterEndpoint.UPDATE;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.oseevol.controller.exception.ResourceNotFoundException;
 import com.oseevol.data.MovieDTO;
+import com.oseevol.data.MovieUpdateDTO;
 import com.oseevol.data.entity.Movie;
 import com.oseevol.service.LibraryService;
 import com.oseevol.util.ResponseWrapper;
@@ -63,11 +66,17 @@ public class MovieController {
 	}
 
 	@PostMapping(CREATE)
-	public ResponseEntity<Object> createMovie(@Valid @RequestBody MovieDTO movie, HttpServletRequest request) {
+	public ResponseEntity<Object> createMovie(@Valid @RequestBody MovieDTO dto, HttpServletRequest request) {
 
-		var movieDb = libraryService.addMovie(movie);
-		var path = request.getRequestURI().replace(CREATE, SLASH + Long.toString(movieDb.getId()));
+		var movie = libraryService.addMovie(dto);
+		var path = request.getRequestURI().replace(CREATE, SLASH + Long.toString(movie.getId()));
 		return ResponseWrapper.created(path);
+	}
+	
+	@PutMapping(UPDATE)
+	public ResponseEntity<Object> updateMovie(@RequestBody MovieUpdateDTO dto){
+		libraryService.updateMovie(dto);
+		return ResponseWrapper.noContent();
 	}
 
 	@DeleteMapping(RESOURCE_ID)

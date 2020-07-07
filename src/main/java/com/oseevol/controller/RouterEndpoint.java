@@ -7,6 +7,7 @@ public final class RouterEndpoint {
 	public static final String GENRES_ROOT = "/genres";
 	public static final String RESOURCE_ID = "/{id}";
 	public static final String SEARCH = "/search";
+	public static final String UPDATE = "/update";
 	public static final String CREATE = "/create";
 	public static final String MOVIE_GENRE = "/{id}/movies";
 	public static final String RESOURCE_NAME = "/{name}";

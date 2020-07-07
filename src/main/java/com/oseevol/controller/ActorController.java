@@ -4,6 +4,7 @@ import static com.oseevol.controller.RouterEndpoint.ACTORS_ROOT;
 import static com.oseevol.controller.RouterEndpoint.CREATE;
 import static com.oseevol.controller.RouterEndpoint.RESOURCE_ID;
 import static com.oseevol.controller.RouterEndpoint.SEARCH;
+import static com.oseevol.controller.RouterEndpoint.UPDATE;
 
 import java.util.Map;
 
@@ -13,12 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.oseevol.data.ActorDTO;
+import com.oseevol.data.ActorUpdateDTO;
 import com.oseevol.data.entity.Actor;
 import com.oseevol.service.LibraryService;
 import com.oseevol.util.ResponseWrapper;
@@ -59,4 +62,9 @@ public class ActorController {
 		return ResponseWrapper.created(path);
 	}
 
+	@PutMapping(UPDATE)
+	public ResponseEntity<Object> updateActor(@RequestBody ActorUpdateDTO dto) {
+		libraryService.updateActor(dto);
+		return ResponseWrapper.noContent();
+	}
 }

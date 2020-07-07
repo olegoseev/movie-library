@@ -3,7 +3,6 @@ package com.oseevol.controller;
 import static com.oseevol.controller.RouterEndpoint.CHARACTERS_MOVIE;
 import static com.oseevol.controller.RouterEndpoint.CHARACTERS_ROOT;
 import static com.oseevol.controller.RouterEndpoint.CREATE;
-import static com.oseevol.controller.RouterEndpoint.RESOURCE_ID;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -30,11 +29,6 @@ public class CharacterController {
 	public CharacterController(LibraryService libraryService) {
 		super();
 		this.libraryService = libraryService;
-	}
-	
-	@GetMapping(RESOURCE_ID)
-	public ResponseEntity<Object> getCharacter(@PathVariable(name = "id") Long id) {
-		return ResponseWrapper.ok(libraryService.getCharacter(id));
 	}
 	
 	@GetMapping(CHARACTERS_MOVIE)

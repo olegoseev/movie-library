@@ -4,28 +4,36 @@ import java.util.List;
 import java.util.Map;
 
 import com.oseevol.data.ActorDTO;
+import com.oseevol.data.ActorUpdateDTO;
 import com.oseevol.data.GenreDTO;
+import com.oseevol.data.GenreUpdateDTO;
 import com.oseevol.data.MovieActorCharacterDTO;
 import com.oseevol.data.MovieCharacterDTO;
 import com.oseevol.data.MovieDTO;
+import com.oseevol.data.MovieUpdateDTO;
 import com.oseevol.data.entity.Actor;
 import com.oseevol.data.entity.Genre;
 import com.oseevol.data.entity.Movie;
 import com.oseevol.data.entity.MovieCharacter;
 
 public interface LibraryService {
-
+	////////////////////////
 	// movies
 	List<Movie> getMovies();
 
 	List<Movie> getMovies(Map<String, String> parameters);
+	
+	Movie addMovie(MovieDTO model);
+
+	void updateMovie(MovieUpdateDTO dto);
 
 	Movie getMovie(Long id);
 
 	List<Movie> getMoviesForGenre(Long id);
 
 	void deleteMovie(long id);
-
+	
+	//////////////////////////////
 	// genres
 	List<Genre> getGenres();
 
@@ -35,10 +43,12 @@ public interface LibraryService {
 
 	Genre getGenreByName(String name);
 
-	Genre addGenre(GenreDTO model);
+	Genre addGenre(GenreDTO dto);
+
+	void updateGenre(GenreUpdateDTO dto);
 
 	void deleteGenre(long id);
-
+	///////////////////////////////
 	// actors
 	List<Actor> getActors();
 
@@ -48,13 +58,17 @@ public interface LibraryService {
 
 	List<Actor> getActorsForMovie(Long id);
 
-	Movie addMovie(MovieDTO model);
 
 	Actor addActor(ActorDTO actor);
 
-	MovieCharacter getCharacter(Long id);
+	void updateActor(ActorUpdateDTO dto);
 
+	////////////////////////////
+	// character
 	MovieActorCharacterDTO getMovieCharacters(Long id);
 
 	MovieCharacter addCharacter(MovieCharacterDTO model);
+
+
+
 }

@@ -24,10 +24,14 @@ import com.oseevol.controller.exception.BadRequestException;
 import com.oseevol.controller.exception.ResourceAlreadyExistsException;
 import com.oseevol.controller.exception.ResourceNotFoundException;
 import com.oseevol.data.ActorDTO;
+import com.oseevol.data.ActorUpdateDTO;
 import com.oseevol.data.GenreDTO;
+import com.oseevol.data.GenreUpdateDTO;
 import com.oseevol.data.MovieActorCharacterDTO;
+import com.oseevol.data.MovieActorCharacterDTO.CharacterActor;
 import com.oseevol.data.MovieCharacterDTO;
 import com.oseevol.data.MovieDTO;
+import com.oseevol.data.MovieUpdateDTO;
 import com.oseevol.data.entity.Actor;
 import com.oseevol.data.entity.Genre;
 import com.oseevol.data.entity.Movie;
@@ -44,6 +48,7 @@ import com.oseevol.repository.specs.SearchCriteria;
 import com.oseevol.repository.specs.SearchOperation;
 import com.oseevol.repository.specs.SearchSpecification;
 import com.oseevol.service.LibraryService;
+import com.oseevol.util.FieldCopy;
 
 @Service
 public class LibraryServiceImpl implements LibraryService {
@@ -192,6 +197,11 @@ public class LibraryServiceImpl implements LibraryService {
 		return movieRepository.save(movie);
 	}
 
+	
+	@Override
+	public void updateMovie(MovieUpdateDTO dto) {
+		
+	}
 	//////////////////////////////////////////////////////////////////////////
 
 	/**
@@ -252,20 +262,40 @@ public class LibraryServiceImpl implements LibraryService {
 	}
 
 	@Override
-	public Genre addGenre(GenreDTO model) {
-		objectNotNull(model);
+	public Genre addGenre(GenreDTO dto) {
+		objectNotNull(dto);
 
-		var optional = genreRepository.findByName(model.getName());
+		var optional = genreRepository.findByName(dto.getName());
 
 		optional.ifPresent(genre -> {
-			if (genre.getName().equalsIgnoreCase(model.getName())) {
+			if (genre.getName().equalsIgnoreCase(dto.getName())) {
 				throw new ResourceAlreadyExistsException(GENRE_NAME_EXISTS);
 			}
 		});
 
-		Genre genre = modelMapper.map(model, Genre.class);
+		Genre genre = modelMapper.map(dto, Genre.class);
 
 		return genreRepository.save(genre);
+	}
+	
+	
+	@Override
+	public void updateGenre(GenreUpdateDTO dto) {
+		objectNotNull(dto);
+		
+		var optional = genreRepository.findById(dto.getId());
+		
+		if(optional.isEmpty()) {
+			throw new ResourceNotFoundException(GENRE_NOT_FOUND);
+		}
+		
+		var genre = optional.get();
+		
+		var copy = new FieldCopy();
+		
+		copy.copyMethods(dto, genre);
+		
+		genreRepository.save(genre);
 	}
 
 	@Override
@@ -353,12 +383,26 @@ public class LibraryServiceImpl implements LibraryService {
 		return actorRepository.save(actor);
 	}
 
-	@Override
-	public MovieCharacter getCharacter(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
+	@Override
+	public void updateActor(ActorUpdateDTO dto) {
+		objectNotNull(dto);
+		
+		var optional = actorRepository.findById(dto.getId());
+		
+		if(optional.isEmpty()) {
+			throw new ResourceNotFoundException(ACTORS_NOT_FOUND);
+		}
+		
+		var actor = optional.get();
+		
+		var copy = new FieldCopy();
+		
+		copy.copyMethods(dto, actor);
+		
+		actorRepository.save(actor);
+	}
+	
 	@Override
 	public MovieActorCharacterDTO getMovieCharacters(Long id) {
 		validateId(id);
@@ -371,7 +415,7 @@ public class LibraryServiceImpl implements LibraryService {
 			throw new ResourceNotFoundException("Characters not found");
 		
 		
-		var movieCharacters = optional.get();
+		List<MovieCharacter> movieCharacters = optional.get();
 		
 		MovieCharacter character = movieCharacters.get(0);
 		
@@ -384,10 +428,13 @@ public class LibraryServiceImpl implements LibraryService {
 		movieCharactersDTO.setMovie(dbMovie);
 		
 		movieCharacters.forEach(mc -> {
-			Actor actor = getActor(mc.getActorId());
-			movieCharactersDTO.getActorCharacters().put(mc.getCharacterName(), actor);
+			var actor = getActor(mc.getActorId());
+			CharacterActor characterActor = new CharacterActor();
+			characterActor.actor = actor;
+			characterActor.character = mc.getCharacterName();
+			movieCharactersDTO.getCharacters().add(characterActor);
 		});
-		
+				
 		return movieCharactersDTO;
 	}
 
