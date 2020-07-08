@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-public class FieldCopy {
+public class ObjectCopy {
 
 	public <S extends Object, T extends Object> void copyProperties(S source, T target) {
 		if(source == null || target ==  null)
